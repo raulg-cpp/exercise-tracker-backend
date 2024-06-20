@@ -38,3 +38,6 @@ https://www.w3schools.com/howto/howto_js_get_date.asp
 
 https://www.freecodecamp.org/news/javascript-date-format-how-to-format-a-date-in-js/
 
+https://reactgo.com/javascript-string-to-date/
+
+https://www.w3schools.com/jsref/jsref_todatestring.asp

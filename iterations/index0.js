@@ -33,18 +33,17 @@ const userSchema = new mongoose.Schema({
   log: [{
     description: {type: String, required: true},
     duration: {type: Number, required: true},
-    date: String
-  }]
+    date: Date
+  }],
+  count: Number
 });
 
 let UserLog =  mongoose.model('UserLog', userSchema);
 
 // wipe data
-/*
 UserLog.deleteMany({})
 .then(x => console.log("wiped data"))
 .catch(error => console.log(error));
-*/
 
 //example person
 /*
@@ -71,7 +70,7 @@ function getUser(id, fdone) {
   .then( data => {
     console.log("retrieved user"); 
     fdone(data); // do something with data
-    //console.log(data);
+    console.log(data);
   })
   .catch( error => console.log(error) );
 }
@@ -99,9 +98,6 @@ getUser(personData._id, x => { console.log(x) } );
 removeUser(personData._id);
 */
 // retrieve user
-
-//var id_g = new mongoose.Types.ObjectId('66738d458b0c089582cada2e');
-//getUser(id_g, x => console.log(x) );
 
 /* --- user functions --- */
 
@@ -145,36 +141,31 @@ app.post("/api/users/:_id/exercises",
     var id = req.body._id;
     var description = req.body.description;
     var duration = req.body.duration;
-    var date_str = req.body.date;
-    
-    console.log(id);
-    console.log(description);
-    console.log(duration);
+    var date = req.body.date;
 
-    var date = date_str.length === 0 ? new Date() : new Date(date_str);
-    date = date.toDateString();
-    console.log(date);
+    //filter
+    if( date.length === 0 ) {
+      var date_now = new Date();
+      date = date_now.getFullYear() + "-" + 
+             date_now.getMonth() + "-" + 
+             date_now.getDate();
+      console.log(date);
+    } 
 
     // output
-    var user_id = new mongoose.Types.ObjectId(id);
-
-    getUser( user_id, user => {
-      user.log.push({
-        'description': description,
-        'duration': duration,
-        'date': date
-      });
-      //console.log(user);
-
-      saveUser(user);
-      
-      res.json({
-        '_id': user._id,
-        'username': user.username,
-        'description': description,
-        'duration': duration,
-        'date': date
-      });
-    }); 
+    /*
+    res.json({
+      _id: id,
+      description: description,
+      duration: duration,
+      date: date
+    });*/
+    function fdone(data) {
+      console.log("access data");
+      res.json(data);
+    }
+    var obj_id = new mongoose.Types.ObjectId(id);
+    console.log(obj_id);
+    getUser( obj_id, fdone); 
   }
 );
