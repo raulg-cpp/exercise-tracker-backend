@@ -46,6 +46,17 @@ UserLog.deleteMany({})
 .then(x => console.log("wiped data"))
 .catch(error => console.log(error));
 */
+//example person
+/*
+const personData = new UserLog(
+  { name: "name", 
+    log: [
+      {description: "desc", duration: 3, date: "1993-03-13"}
+    ]
+  }
+);
+console.log(personData);
+*/
 
 // save user
 function saveUser(user) {
@@ -60,7 +71,7 @@ function getUser(id, fdone) {
   .then( data => {
     console.log("retrieved user"); 
     fdone(data); // do something with data
-    //console.log(data);
+    console.log(data);
   })
   .catch( error => console.log(error) );
 }
@@ -78,6 +89,16 @@ function removeUser(id) {
   .then( data => console.log("removed user") )
   .catch( error => console.log(error) );
 }
+
+// test
+/*
+saveUser(personData);
+getUser(personData._id, x => { console.log(x) } );
+updateUser(personData._id, { name: "bob" } );
+getUser(personData._id, x => { console.log(x) } );
+removeUser(personData._id);
+*/
+// retrieve user
 
 /* --- user functions --- */
 
@@ -118,17 +139,19 @@ app.get("/api/users",
 app.post("/api/users/:_id/exercises",  
   function (req, res) {
     // form input
-    var id = req.params["_id"];
+    var id = req.body._id;
     var description = req.body.description;
-    var duration = Number(req.body.duration);
-    var date_input = req.body.date;
-
-    // format date
-    var dateIsString = typeof(date_input) === 'string' || (date_input instanceof String); 
-    let date = dateIsString ? new Date(date_input) : new Date();
-    date = date.toDateString();
+    var duration = req.body.duration;
     
-    //console.log(date);
+    // filter and format date 
+    // NOTE: test succeeds with year-month-day format
+    var date = req.body.date;
+    if( date.length === 0 ) {
+      var date_now = new Date();
+      date = date_now.getFullYear() + "-" + 
+             date_now.getMonth() + "-" + 
+             date_now.getDate();
+    } 
 
     // output
     var user_id = new mongoose.Types.ObjectId(id);
@@ -145,11 +168,11 @@ app.post("/api/users/:_id/exercises",
       
       // api output
       res.json({
-        '_id': id,
+        '_id': user._id,
         'username': user.username,
-        'date': date,
+        'description': description,
         'duration': duration,
-        'description': description
+        'date': date
       }); 
     });
   }

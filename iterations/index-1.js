@@ -33,9 +33,8 @@ const userSchema = new mongoose.Schema({
   log: [{
     description: {type: String, required: true},
     duration: {type: Number, required: true},
-    date: Date
-  }],
-  count: Number
+    date: String
+  }]
 });
 
 let UserLog =  mongoose.model('UserLog', userSchema);
@@ -45,6 +44,18 @@ let UserLog =  mongoose.model('UserLog', userSchema);
 UserLog.deleteMany({})
 .then(x => console.log("wiped data"))
 .catch(error => console.log(error));
+*/
+
+//example person
+/*
+const personData = new UserLog(
+  { name: "name", 
+    log: [
+      {description: "desc", duration: 3, date: "1993-03-13"}
+    ]
+  }
+);
+console.log(personData);
 */
 
 // save user
@@ -79,6 +90,19 @@ function removeUser(id) {
   .catch( error => console.log(error) );
 }
 
+// test
+/*
+saveUser(personData);
+getUser(personData._id, x => { console.log(x) } );
+updateUser(personData._id, { name: "bob" } );
+getUser(personData._id, x => { console.log(x) } );
+removeUser(personData._id);
+*/
+// retrieve user
+
+//var id_g = new mongoose.Types.ObjectId('66738d458b0c089582cada2e');
+//getUser(id_g, x => console.log(x) );
+
 /* --- user functions --- */
 
 // read create user
@@ -106,7 +130,7 @@ app.get("/api/users",
     .sort( {username: 1} )
     .select( {username: 1, _id: 1} )
     .then( data => {
-      //console.log(data);
+      console.log(data);
       res.json( data ); 
     })
     .catch( error => console.log(error) );
@@ -118,39 +142,39 @@ app.get("/api/users",
 app.post("/api/users/:_id/exercises",  
   function (req, res) {
     // form input
-    var id = req.params["_id"];
+    var id = req.body._id;
     var description = req.body.description;
-    var duration = Number(req.body.duration);
-    var date_input = req.body.date;
-
-    // format date
-    var dateIsString = typeof(date_input) === 'string' || (date_input instanceof String); 
-    let date = dateIsString ? new Date(date_input) : new Date();
-    date = date.toDateString();
+    var duration = req.body.duration;
+    var date_str = req.body.date;
     
-    //console.log(date);
+    console.log(id);
+    console.log(description);
+    console.log(duration);
+
+    var date = date_str.length === 0 ? new Date() : new Date(date_str);
+    date = date.toDateString();
+    console.log(date);
 
     // output
     var user_id = new mongoose.Types.ObjectId(id);
 
     getUser( user_id, user => {
-      // update log
       user.log.push({
         'description': description,
         'duration': duration,
         'date': date
       });
       //console.log(user);
+
       saveUser(user);
       
-      // api output
       res.json({
-        '_id': id,
+        '_id': user._id,
         'username': user.username,
-        'date': date,
+        'description': description,
         'duration': duration,
-        'description': description
-      }); 
-    });
+        'date': date
+      });
+    }); 
   }
 );

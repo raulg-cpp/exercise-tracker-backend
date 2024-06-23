@@ -41,3 +41,8 @@ https://www.freecodecamp.org/news/javascript-date-format-how-to-format-a-date-in
 https://reactgo.com/javascript-string-to-date/
 
 https://www.w3schools.com/jsref/jsref_todatestring.asp
+
+
+# Passing tests | FreeCodeCamp
+
+https://forum.freecodecamp.org/t/exercise-tracker-tests-are-bugged/471416/8
