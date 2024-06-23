@@ -123,8 +123,15 @@ app.post("/api/users/:_id/exercises",
     var date_input = req.body.date;
     
     // format date
+    //console.log(date_input);
+    //console.log( typeof(date_input) );
+
+    //var dateIsString = typeof(date_input) === 'string' || (date_input instanceof String); 
+    //var dateIsEmpty = dateIsString ? (date_input.length ? 0 : 1) : 1;
+    //var dateIsEmpty = date_input.length === 0;
     var date = date_input ? new Date(date_input) : new Date();
     var date_str = date.toDateString();
+
     //console.log(date_str);
 
     // output

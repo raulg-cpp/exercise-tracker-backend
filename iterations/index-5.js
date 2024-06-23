@@ -33,18 +33,19 @@ const userSchema = new mongoose.Schema({
   log: [{
     description: {type: String, required: true},
     duration: {type: Number, required: true},
-    date: {type: String, required: true}
+    date: Date
   }],
+  count: Number
 });
 
 let UserLog =  mongoose.model('UserLog', userSchema);
 
 // wipe data
-//
+/*
 UserLog.deleteMany({})
 .then(x => console.log("wiped data"))
 .catch(error => console.log(error));
-//
+*/
 
 // save user
 function saveUser(user) {
@@ -121,11 +122,14 @@ app.post("/api/users/:_id/exercises",
     var description = req.body.description;
     var duration = Number(req.body.duration);
     var date_input = req.body.date;
-    
+
     // format date
-    var date = date_input ? new Date(date_input) : new Date();
-    var date_str = date.toDateString();
-    //console.log(date_str);
+    // ref: https://stackoverflow.com/questions/4059147/check-if-a-variable-is-a-string-in-javascript
+    var dateIsString = typeof(date_input) === 'string' || (date_input instanceof String); 
+    let date = dateIsString ? new Date(date_input) : new Date();
+    date = date.toDateString();
+    
+    //console.log(date);
 
     // output
     var user_id = new mongoose.Types.ObjectId(id);
@@ -135,7 +139,7 @@ app.post("/api/users/:_id/exercises",
       user.log.push({
         'description': description,
         'duration': duration,
-        'date': date_str
+        'date': date
       });
       //console.log(user);
       saveUser(user);
@@ -144,29 +148,10 @@ app.post("/api/users/:_id/exercises",
       res.json({
         '_id': id,
         'username': user.username,
-        'date': date_str,
+        'date': date,
         'duration': duration,
         'description': description
       }); 
     });
   }
 );
-
-app.get("/api/users/:_id/logs",  
-  function (req, res) {
-    var id = req.params["_id"];
-    var user_id = new mongoose.Types.ObjectId(id);
-
-    getUser( user_id, 
-      function(user) {
-        //console.log(user);
-        var logs = user.log;
-        res.json({
-          '_id': user_id,
-          'username': user.username,
-          'log': logs,
-          'count': user.__v // length of array
-        });
-      }
-    );
-});
