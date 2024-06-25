@@ -25,6 +25,21 @@ __Entry id__:
 https://dev.devbf.com/posts/how-can-i-convert-a-string-to-an-objectid-in-nodejs-with-mongoose-d3f0c/
 
 
+__Filtering arrays and objects__:
+
+https://stackoverflow.com/questions/41404599/mongoose-check-if-value-exists-in-an-array-of-objects
+
+https://stackoverflow.com/questions/18148166/find-document-with-array-that-contains-a-specific-value
+
+https://nesin.io/blog/filter-documents-specific-date-range-mongodb
+
+
+
+
+# Express JS
+
+__Access named parameters__:
+https://www.geeksforgeeks.org/express-js-req-query-property/
 
 # Javascript
 
@@ -32,6 +47,8 @@ __Misc__:
 https://stackoverflow.com/questions/21978392/modify-a-variable-inside-a-function
 
 https://www.freecodecamp.org/news/javascript-check-if-undefined-how-to-test-for-undefined-in-js/
+
+https://stackoverflow.com/questions/154059/how-do-i-check-for-an-empty-undefined-null-string-in-javascript
 
 __Dates__:
 https://www.w3schools.com/howto/howto_js_get_date.asp
