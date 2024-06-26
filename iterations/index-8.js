@@ -37,7 +37,7 @@ const userSchema = new mongoose.Schema({
     {
       description: { type: String, required: true },
       duration: { type: Number, required: true },
-      date: { type: Date, required: true },
+      date: { type: String, required: true },
     },
   ],
 });
@@ -136,7 +136,7 @@ app.post("/api/users/:_id/exercises", function (req, res) {
     user.log.push({
       description: description,
       duration: duration,
-      date: date,
+      date: date_str,
     });
     //console.log(user);
     saveUser(user);
@@ -157,10 +157,10 @@ app.get("/api/users/:_id/logs", function (req, res) {
   var user_id = new mongoose.Types.ObjectId(id);
 
   // header variables
-  var variables = req.query;
-  var date_to = variables["to"];
-  var date_from = variables["from"];
-  var limit = variables["limit"];
+  var variables = req.params;
+  var date_to = variables.to;
+  var date_from = variables.from;
+  var limit = variables.limit;
   /*
   if (date_to === undefined) {
     console.log("date_to undef");
@@ -171,63 +171,39 @@ app.get("/api/users/:_id/logs", function (req, res) {
   if (limit === undefined) {
     console.log("limit undef");
   }*/
-  //
-  console.log(id);
+  /*
   console.log(date_to);
   console.log(date_from);
   console.log(limit);
-  //
+  */
   if (date_to === undefined || date_from == undefined) {
     getUser(user_id, function (user) {
       //console.log(user);
-      var logs = user.log; // data
-      var arr_logs = logs.map((x) => {
-        var x_date = x.date.toDateString();
-        return {
-          description: x.description,
-          duration: x.duration,
-          date: x_date,
-        };
-      });
-      console.log(arr_logs);
-
-      // output
+      var logs = user.log;
       res.json({
         _id: user_id,
         username: user.username,
-        log: arr_logs,
+        log: logs,
         count: user.__v, // length of array
       });
     });
 
     // valid date limits
   } else {
-    // convert to date type
-    date_from = new Date(date_from);
-    date_to = new Date(date_to);
-    // convert to stored date format
-    //date_from = date_from.toDateString();
-    //date_to = date_to.toDateString();
-
-    console.log(date_to);
-    console.log(date_from);
-
-    //filter limit
-    if (limit === undefined) {
-      limit = 1e6; // assume large value
-    }
-
-    //output
-    UserLog.find({
-      _id: user_id,
-      "logs.date": { $gte: date_from, $lte: date_to },
-    })
-      .limit(limit)
-      .then((data) => {
-        console.log(data);
-        res.json(data);
-      })
-      .catch((error) => console.log(error));
-    //
+    /*
+    Person.find( {'favoriteFoods': foodToSearch} )
+    .sort( {'name': 1} )
+    .limit(2)
+    .select( {'name': 1, '_id': 0, 'age': 0} )
+    .exec(
+      function( error, data ) {
+        if(error) {
+          return done(error);
+        } else {
+          console.log(data);
+          return done(null, data);
+        }
+    });
+    */
   }
 });
