@@ -34,12 +34,11 @@ https://stackoverflow.com/questions/18148166/find-document-with-array-that-conta
 https://nesin.io/blog/filter-documents-specific-date-range-mongodb
 
 
-
-
 # Express JS
 
 __Access named parameters__:
 https://www.geeksforgeeks.org/express-js-req-query-property/
+
 
 # Javascript
 
@@ -50,6 +49,10 @@ https://www.freecodecamp.org/news/javascript-check-if-undefined-how-to-test-for-
 
 https://stackoverflow.com/questions/154059/how-do-i-check-for-an-empty-undefined-null-string-in-javascript
 
+https://stackoverflow.com/questions/14236515/can-i-limit-the-length-of-an-array-in-javascript
+
+https://stackoverflow.com/questions/135448/how-do-i-check-if-an-object-has-a-specific-property-in-javascript
+
 __Dates__:
 https://www.w3schools.com/howto/howto_js_get_date.asp
 
@@ -58,6 +61,10 @@ https://www.freecodecamp.org/news/javascript-date-format-how-to-format-a-date-in
 https://reactgo.com/javascript-string-to-date/
 
 https://www.w3schools.com/jsref/jsref_todatestring.asp
+
+https://stackoverflow.com/questions/11526504/minimum-and-maximum-date
+
+https://www.geeksforgeeks.org/javascript-date-gettime-method/
 
 
 # Passing tests | FreeCodeCamp

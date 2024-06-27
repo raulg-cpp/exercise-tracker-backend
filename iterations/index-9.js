@@ -161,74 +161,73 @@ app.get("/api/users/:_id/logs", function (req, res) {
   var date_to = variables["to"];
   var date_from = variables["from"];
   var limit = variables["limit"];
-  //
+  /*
   if (date_to === undefined) {
-    //console.log("date_to undef");
-    date_to = new Date(); // largest date is current date
-  } else {
-    date_to = new Date(date_to);
+    console.log("date_to undef");
   }
   if (date_from === undefined) {
-    //console.log("date_from undef");
-    date_from = new Date(-8640000000000000); // minimum date
-  } else {
-    date_from = new Date(date_from);
+    console.log("date_from undef");
   }
-
   if (limit === undefined) {
-    //console.log("limit undef");
-    limit = 1e6; // large number
-  } else {
-    limit = Number(limit);
-  }
+    console.log("limit undef");
+  }*/
   //
-  /*
   console.log(id);
   console.log(date_to);
   console.log(date_from);
   console.log(limit);
-  */
+  //
+  if (date_to === undefined || date_from == undefined) {
+    getUser(user_id, function (user) {
+      //console.log(user);
+      var logs = user.log; // data
+      var arr_logs = logs.map((x) => {
+        var x_date = x.date.toDateString();
+        return {
+          description: x.description,
+          duration: x.duration,
+          date: x_date,
+        };
+      });
+      console.log(arr_logs);
 
-  getUser(user_id, function (user) {
-    //console.log(user);
-
-    var logs = user.log; // data
-    //console.log(logs);
-
-    // filter by date
-    //var from_time = date_from.getTime();
-    //var to_time = date_to.getTime();
-
-    var logs_filter = logs.filter((x) => {
-      var date_x = x.date;
-      //var date_time = date_x.getTime();
-      //return from_time < date_time && date_time < to_time;
-      return (
-        date_from.getTime() < date_x.getTime() &&
-        date_x.getTime() < date_to.getTime()
-      );
+      // output
+      res.json({
+        _id: user_id,
+        username: user.username,
+        log: arr_logs,
+        count: user.__v, // length of array
+      });
     });
 
-    // api output
-    var arr_logs = logs_filter.map((x) => {
-      var x_date = x.date.toDateString();
-      return {
-        description: x.description,
-        duration: x.duration,
-        date: x_date,
-      };
-    });
+    // valid date limits
+  } else {
+    // convert to date type
+    date_from = new Date(date_from);
+    date_to = new Date(date_to);
+    // convert to stored date format
+    //date_from = date_from.toDateString();
+    //date_to = date_to.toDateString();
 
-    // limit length
-    arr_logs.length = Math.min(arr_logs.length, limit);
-    //console.log(arr_logs);
+    console.log(date_to);
+    console.log(date_from);
 
-    // output
-    res.json({
+    //filter limit
+    if (limit === undefined) {
+      limit = 1e6; // assume large value
+    }
+
+    //output
+    UserLog.find({
       _id: user_id,
-      username: user.username,
-      log: arr_logs,
-      count: user.__v, // length of output array
-    });
-  });
+      "logs.date": { $gte: date_from, $lte: date_to },
+    })
+      .limit(limit)
+      .then((data) => {
+        console.log(data);
+        res.json(data);
+      })
+      .catch((error) => console.log(error));
+    //
+  }
 });
