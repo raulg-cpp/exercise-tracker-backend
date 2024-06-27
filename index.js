@@ -44,7 +44,7 @@ const userSchema = new mongoose.Schema({
 
 let UserLog = mongoose.model("UserLog", userSchema);
 
-// wipe data
+// wipe data before tests
 //
 UserLog.deleteMany({})
   .then((x) => console.log("wiped data"))
@@ -65,7 +65,6 @@ function getUser(id, fdone) {
     .then((data) => {
       console.log("retrieved user");
       fdone(data); // do something with data
-      //console.log(data);
     })
     .catch((error) => console.log(error));
 }
@@ -108,7 +107,6 @@ app.get("/api/users", function (req, res) {
     .sort({ username: 1 })
     .select({ username: 1, _id: 1 })
     .then((data) => {
-      //console.log(data);
       res.json(data);
     })
     .catch((error) => console.log(error));
@@ -126,7 +124,6 @@ app.post("/api/users/:_id/exercises", function (req, res) {
   // format date
   var date = date_input ? new Date(date_input) : new Date();
   var date_str = date.toDateString();
-  //console.log(date_str);
 
   // output
   var user_id = new mongoose.Types.ObjectId(id);
@@ -138,7 +135,6 @@ app.post("/api/users/:_id/exercises", function (req, res) {
       duration: duration,
       date: date,
     });
-    //console.log(user);
     saveUser(user);
 
     // api output
@@ -161,52 +157,38 @@ app.get("/api/users/:_id/logs", function (req, res) {
   var date_to = variables["to"];
   var date_from = variables["from"];
   var limit = variables["limit"];
-  //
+
+  // establish bounds
   if (date_to === undefined) {
-    //console.log("date_to undef");
     date_to = new Date(); // largest date is current date
   } else {
     date_to = new Date(date_to);
   }
+
   if (date_from === undefined) {
-    //console.log("date_from undef");
     date_from = new Date(-8640000000000000); // minimum date
   } else {
     date_from = new Date(date_from);
   }
 
   if (limit === undefined) {
-    //console.log("limit undef");
     limit = 1e6; // large number
   } else {
     limit = Number(limit);
   }
-  //
-  /*
-  console.log(id);
-  console.log(date_to);
-  console.log(date_from);
-  console.log(limit);
-  */
 
+  // access user data
   getUser(user_id, function (user) {
-    //console.log(user);
-
     var logs = user.log; // data
-    //console.log(logs);
 
     // filter by date
-    //var from_time = date_from.getTime();
-    //var to_time = date_to.getTime();
-
+    var from_time = date_from.getTime();
+    var to_time = date_to.getTime();
+    
     var logs_filter = logs.filter((x) => {
       var date_x = x.date;
-      //var date_time = date_x.getTime();
-      //return from_time < date_time && date_time < to_time;
-      return (
-        date_from.getTime() < date_x.getTime() &&
-        date_x.getTime() < date_to.getTime()
-      );
+      var date_time = date_x.getTime();
+      return ( from_time < date_time && date_time < to_time );
     });
 
     // api output
@@ -221,9 +203,8 @@ app.get("/api/users/:_id/logs", function (req, res) {
 
     // limit length
     arr_logs.length = Math.min(arr_logs.length, limit);
-    //console.log(arr_logs);
 
-    // output
+    // output of api
     res.json({
       _id: user_id,
       username: user.username,
